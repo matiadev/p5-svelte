@@ -17,6 +17,7 @@
 			font-family: system-ui;
 			color: #fff;
 			background: #1b1e28;
+			text-align: center;
 		}
 	}
 </style>

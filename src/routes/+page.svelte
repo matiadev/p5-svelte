@@ -1,15 +1,21 @@
 <script lang="ts">
 	import P5Sketch, { type Sketch } from '$lib/index.js';
 
+	let x = 0;
+	let y = 0;
 	let diameter = $state(100);
 
-	const sketch: Sketch = (p5) => {
-		p5.setup = () => {
-			p5.createCanvas(400, 400);
+	const sketch: Sketch = (p) => {
+		p.setup = () => {
+			p.createCanvas(800, 600);
+			p.noStroke();
 		};
-		p5.draw = () => {
-			p5.background(200);
-			p5.circle(p5.width / 2, p5.height / 2, diameter);
+		p.draw = () => {
+			p.background(10);
+			x = p.lerp(x, p.mouseX, 0.05);
+			y = p.lerp(y, p.mouseY, 0.05);
+			p.fill(255);
+			p.circle(x, y, diameter);
 		};
 	};
 </script>
