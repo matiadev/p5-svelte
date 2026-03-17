@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>P5 Svelte</title>
+	<title>Svelte + p5.js</title>
 </svelte:head>
 
 {@render children()}
@@ -14,9 +14,9 @@
 			height: 100svh;
 			display: grid;
 			place-content: center;
-			font-family: sans-serif;
+			font-family: system-ui;
 			color: #fff;
-			background: #1e1e1e;
+			background: #1b1e28;
 		}
 	}
 </style>
