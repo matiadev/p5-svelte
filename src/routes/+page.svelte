@@ -5,17 +5,17 @@
 	let y = 0;
 	let diameter = $state(100);
 
-	const sketch: Sketch = (p) => {
-		p.setup = () => {
-			p.createCanvas(800, 600);
-			p.noStroke();
+	const sketch: Sketch = ($) => {
+		$.setup = () => {
+			$.createCanvas(800, 600);
+			$.noStroke();
 		};
-		p.draw = () => {
-			p.background(10);
-			x = p.lerp(x, p.mouseX, 0.05);
-			y = p.lerp(y, p.mouseY, 0.05);
-			p.fill(255);
-			p.circle(x, y, diameter);
+		$.draw = () => {
+			$.background(10);
+			x = $.lerp(x, $.mouseX, 0.05);
+			y = $.lerp(y, $.mouseY, 0.05);
+			$.fill(255);
+			$.circle(x, y, diameter);
 		};
 	};
 </script>
