@@ -1,65 +1,118 @@
-# Svelte library
+# @sveltecraft/p5-svelte
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+<p align="center">
+	<img src="./banner.png" alt="@sveltecraft/p5-svelte" width="800" height="400">
+</p>
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+A Svelte component wrapper for p5.js sketches.
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
+## Installation
 
 ```sh
-# recreate this project
-npx sv@0.12.7 create --template library --types ts --add prettier eslint --no-install .
+npm install @sveltecraft/p5-svelte p5
 ```
 
-## Developing
+Note: `p5` is a peer dependency and must be installed alongside this package.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Usage
 
-```sh
-npm run dev
+```svelte
+<script lang="ts">
+	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte';
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+	let x = 0;
+	let y = 0;
+	let diameter = $state(100);
+
+	const sketch: Sketch = (p) => {
+		p.setup = () => {
+			p.createCanvas(800, 600);
+			p.noStroke();
+		};
+		p.draw = () => {
+			p.background(10);
+			x = p.lerp(x, p.mouseX, 0.05);
+			y = p.lerp(y, p.mouseY, 0.05);
+			p.fill(255);
+			p.circle(x, y, diameter);
+		};
+	};
+</script>
+
+<P5Sketch {sketch} />
+
+<label>
+	diameter
+	<input type="range" bind:value={diameter} min={0} max={400} />
+	{diameter}
+</label>
 ```
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+## Addons (p5.sound, etc.)
 
-## Building
+> ⚠️ **Warning**
+> This library is designed for p5.js 2.0+ which has a slightly different API than older versions. In the new version, asset preloading is done in `setup` instead of the `preload` function.
 
-To build your library:
+In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case — `p5.sound` is a standalone package which doesn't provide types so you have to use `any` or create your own types if you want type-safety.
 
-```sh
-npm pack
+Some p5 addons like `p5.sound` require access to a global `p5` instance. This component supports loading addons before the sketch initializes:
+
+```svelte
+<script lang="ts">
+	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte';
+
+	let x = 0;
+	let y = 0;
+	let diameter = $state(100);
+
+	type SoundFile = {
+		play: () => void;
+	};
+
+	// @ts-expect-error p5.sound lacks types
+	const addons = [() => import('p5.sound')];
+
+	const sketch: Sketch = (p) => {
+		let sound: SoundFile;
+		p.setup = async () => {
+			// @ts-expect-error p5.sound lacks types
+			sound = await p.loadSound('./sfx.mp3');
+			p.createCanvas(400, 400);
+		};
+		p.draw = () => {
+			p.background(10);
+		};
+		p.mousePressed = () => {
+			sound.play();
+		};
+	};
+</script>
+
+<P5Sketch {sketch} {addons} />
+
+<label>
+	diameter
+	<input type="range" bind:value={diameter} min={0} max={400} />
+	{diameter}
+</label>
 ```
 
-To create a production version of your showcase app:
+### Why this approach?
 
-```sh
-npm run build
-```
+Addons like `p5.sound` look for `window.p5` at load time to extend the library. By passing addons as an array, the component:
 
-You can preview the production build with `npm run preview`.
+1. Loads `p5` dynamically
+2. Assigns `p5` to `window.p5` before loading addons
+3. Waits for all addons to load
+4. Then initializes your sketch
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+This ensures addons are properly registered before your sketch runs.
 
-## Publishing
+## API
 
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
+### Props
 
-To publish your library to [npm](https://www.npmjs.com):
-
-```sh
-npm publish
-```
+- `sketch` (required): A function that receives a p5 instance and defines `setup` and `draw` methods
+- `addons` (optional): Array of async functions that load p5 addons
+- `style` (optional): CSS styles to apply to the canvas container
+- `class` (optional): CSS class to apply to the canvas container
