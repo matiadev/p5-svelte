@@ -1,7 +1,7 @@
 # @sveltecraft/p5-svelte
 
 <p align="center">
-	<img src="./banner.png" alt="@sveltecraft/p5-svelte" width="800" height="400">
+	<img src="./static/banner.png" alt="@sveltecraft/p5-svelte" width="800" height="400">
 </p>
 
 A Svelte component wrapper for p5.js sketches.
