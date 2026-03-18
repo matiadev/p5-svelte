@@ -33,9 +33,6 @@ importers:
       '@types/node':
         specifier: ^24
         version: 24.12.0
-      '@types/p5':
-        specifier: ^1.7.7
-        version: 1.7.7
       eslint:
         specifier: ^9.39.2
         version: 9.39.4
@@ -531,9 +528,6 @@ packages:
 
   '@types/node@24.12.0':
     resolution: {integrity: sha512-GYDxsZi3ChgmckRT9HPU0WEhKLP08ev/Yfcq2AstjrDASOYCSXeyjDsHg4v5t4jOj7cyDX3vmprafKlWIG9MXQ==}
-
-  '@types/p5@1.7.7':
-    resolution: {integrity: sha512-WFuP7jqc5CkkMtCK/NphgvMnJz1Qi9CMuK7t6xLu/tuXkRdGQA4q4AD0dUYcChC0Oibe8PE8gbKSFPNF0BqVNw==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -1585,8 +1579,6 @@ snapshots:
   '@types/node@24.12.0':
     dependencies:
       undici-types: 7.16.0
-
-  '@types/p5@1.7.7': {}
 
   '@types/trusted-types@2.0.7': {}
 

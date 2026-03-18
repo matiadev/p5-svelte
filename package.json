@@ -1,6 +1,9 @@
 {
-	"name": "p5-svelte",
+	"name": "@sveltecraft/p5-svelte",
 	"version": "0.0.1",
+	"description": "A Svelte component wrapper for p5.js sketches",
+	"author": "Sveltecraft",
+	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -41,7 +44,6 @@
 		"@sveltejs/package": "^2.5.7",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"@types/node": "^24",
-		"@types/p5": "^1.7.7",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
