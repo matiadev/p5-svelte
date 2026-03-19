@@ -1,18 +1,16 @@
-# @sveltecraft/p5-svelte
-
 <p align="center">
 	<img src="./static/banner.png" alt="@sveltecraft/p5-svelte" width="800" height="400">
 </p>
+
+# @sveltecraft/p5-svelte
 
 A Svelte component wrapper for p5.js sketches.
 
 ## Installation
 
 ```sh
-npm install @sveltecraft/p5-svelte p5
+npm i @sveltecraft/p5-svelte p5
 ```
-
-Note: `p5` is a peer dependency and must be installed alongside this package.
 
 ## Usage
 
@@ -51,11 +49,11 @@ Note: `p5` is a peer dependency and must be installed alongside this package.
 ## Addons (p5.sound, etc.)
 
 > ⚠️ **Warning**
-> This library is designed for p5.js 2.0+ which has a slightly different API than older versions. In the new version, asset preloading is done in `setup` instead of the `preload` function.
+> p5.js 2.0+ has a slightly different API than older versions. In the new version, asset preloading is done in `setup` instead of the `preload` function.
 
-In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case — `p5.sound` is a standalone package which doesn't provide types so you have to use `any` or create your own types if you want type-safety.
+In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case — `p5.sound` is a standalone package and doesn't include types, so you have to use `any` or create your own types.
 
-Some p5 addons like `p5.sound` require access to a global `p5` instance. This component supports loading addons before the sketch initializes:
+Addons like `p5.sound` require access to a global `p5` instance, so we have to dynamically load them using the `addons` array before the sketch initializes:
 
 ```svelte
 <script lang="ts">
@@ -65,24 +63,27 @@ Some p5 addons like `p5.sound` require access to a global `p5` instance. This co
 	let y = 0;
 	let diameter = $state(100);
 
+	// custom sound type
 	type SoundFile = {
 		play: () => void;
 	};
 
-	// @ts-expect-error p5.sound lacks types
+	// @ts-expect-error addon lacks types
 	const addons = [() => import('p5.sound')];
 
 	const sketch: Sketch = (p) => {
+		// store sound reference
 		let sound: SoundFile;
 		p.setup = async () => {
-			// @ts-expect-error p5.sound lacks types
-			sound = await p.loadSound('./sfx.mp3');
+			// preload sound
+			sound = await (p as any).loadSound('./sfx.mp3');
 			p.createCanvas(400, 400);
 		};
 		p.draw = () => {
 			p.background(10);
 		};
 		p.mousePressed = () => {
+			// play sound
 			sound.play();
 		};
 	};
