@@ -16,25 +16,25 @@ npm i @sveltecraft/p5-svelte p5
 
 ```svelte
 <script lang="ts">
-	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte';
+	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte'
 
-	let x = 0;
-	let y = 0;
-	let diameter = $state(100);
+	let x = 0
+	let y = 0
+	let diameter = $state(100)
 
 	const sketch: Sketch = (p) => {
 		p.setup = () => {
-			p.createCanvas(800, 600);
-			p.noStroke();
-		};
+			p.createCanvas(800, 600)
+			p.noStroke()
+		}
 		p.draw = () => {
-			p.background(10);
-			x = p.lerp(x, p.mouseX, 0.05);
-			y = p.lerp(y, p.mouseY, 0.05);
-			p.fill(255);
-			p.circle(x, y, diameter);
-		};
-	};
+			p.background(10)
+			x = p.lerp(x, p.mouseX, 0.05)
+			y = p.lerp(y, p.mouseY, 0.05)
+			p.fill(255)
+			p.circle(x, y, diameter)
+		}
+	}
 </script>
 
 <P5Sketch {sketch} />
@@ -57,45 +57,35 @@ Addons like `p5.sound` require access to a global `p5` instance, so we have to d
 
 ```svelte
 <script lang="ts">
-	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte';
-
-	let x = 0;
-	let y = 0;
-	let diameter = $state(100);
+	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte'
 
 	// custom sound type
 	type SoundFile = {
-		play: () => void;
-	};
+		play: () => void
+	}
 
-	// @ts-expect-error addon lacks types
-	const addons = [() => import('p5.sound')];
+	// @ts-expect-error no types
+	const addons = [() => import('p5.sound')]
 
 	const sketch: Sketch = (p) => {
 		// store sound reference
-		let sound: SoundFile;
+		let sound: SoundFile
 		p.setup = async () => {
 			// preload sound
-			sound = await (p as any).loadSound('./sfx.mp3');
-			p.createCanvas(400, 400);
-		};
+			sound = await (p as any).loadSound('./sfx.mp3')
+			p.createCanvas(400, 400)
+		}
 		p.draw = () => {
-			p.background(10);
-		};
+			p.background(10)
+		}
 		p.mousePressed = () => {
 			// play sound
-			sound.play();
-		};
-	};
+			sound.play()
+		}
+	}
 </script>
 
 <P5Sketch {sketch} {addons} />
-
-<label>
-	diameter
-	<input type="range" bind:value={diameter} min={0} max={400} />
-	{diameter}
-</label>
 ```
 
 ### Why this approach?
