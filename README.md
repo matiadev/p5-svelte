@@ -148,8 +148,8 @@ Addons like `p5.sound` require access to a global `p5` instance, so we have to d
 		// store sound reference
 		let sound: SoundFile
 		p.setup = async () => {
-			// preload sound
-			sound = await (p as any).loadSound('./sfx.mp3')
+			// preload sound from `static` folder
+			sound = await (p as any).loadSound('/sfx.mp3')
 			p.createCanvas(400, 400)
 		}
 		p.draw = () => {
