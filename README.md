@@ -14,7 +14,7 @@ npm i @sveltecraft/p5-svelte p5
 
 ## Usage
 
-Import the `P5Sketch` component (you can name it anything since it's a default export) and the optional `Sketch` type. After that create a sketch function with a `setup` and `draw` function. Since we're using [instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) we have to prefix any p5 method with `p` (or whatever you decide to name it) which we receive as an argument:
+Import the `P5Sketch` component and the optional `Sketch` type. After that create a sketch function with a `setup` and `draw` function. Since we're using [instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) we have to prefix any p5 method with `p` which we receive as an argument:
 
 ```svelte
 <script lang="ts">
@@ -30,7 +30,7 @@ Import the `P5Sketch` component (you can name it anything since it's a default e
 			p.noStroke()
 		}
 		p.draw = () => {
-			p.background(10)
+			p.background(4)
 			x = p.lerp(x, p.mouseX, 0.05)
 			y = p.lerp(y, p.mouseY, 0.05)
 			p.fill(255)
@@ -72,6 +72,53 @@ You can create as many sketches as you want:
 <P5Sketch sketch={randomNumberDistribution} />
 ```
 
+## Abstracting Code
+
+If you want to abstract your code into a class or function keep in mind you have to pass the p5 object to it:
+
+```svelte
+<script lang="ts">
+	class Walker {
+		p: p5
+		x = 0
+		y = 0
+
+		constructor(p: p5) {
+			this.p = p
+			this.x = this.p.width / 2
+			this.y = this.p.height / 2
+		}
+
+		show() {
+			this.p.stroke(255)
+			this.p.point(this.x, this.y)
+		}
+
+		step() {
+			let xstep = this.p.random(-1, 1)
+			let ystep = this.p.random(-1, 1)
+			this.x += xstep
+			this.y += ystep
+		}
+	}
+
+	const walker: Sketch = (p) => {
+		let walker: Walker
+		p.setup = () => {
+			walker = new Walker(p)
+			p.createCanvas(400, 400)
+			p.background(4)
+		}
+		p.draw = () => {
+			walker.step()
+			walker.show()
+		}
+	}
+</script>
+
+<P5Sketch sketch={walker} />
+```
+
 ## Addons
 
 > ⚠️ **Warning**
@@ -79,7 +126,7 @@ You can create as many sketches as you want:
 
 This section describes using addons like `p5.sound`.
 
-In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case. `p5.sound` is a standalone package you have to install using `npm i p5.sound` and it doesn't include types, so you have to use `any` or create your own types.
+In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case. `p5.sound` is a standalone package you have to install using `npm i p5.sound`. It doesn't include types, so you have to use `any` or create your own types.
 
 Addons like `p5.sound` require access to a global `p5` instance, so we have to dynamically load them using the `addons` array before the sketch initializes:
 
