@@ -14,6 +14,8 @@ npm i @sveltecraft/p5-svelte p5
 
 ## Usage
 
+Import the `P5Sketch` component (you can name it anything since it's a default export) and the optional `Sketch` type. After that create a sketch function with a `setup` and `draw` function. Since we're using [instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) we have to prefix any p5 method with `p` (or whatever you decide to name it) which we receive as an argument:
+
 ```svelte
 <script lang="ts">
 	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte'
@@ -46,12 +48,38 @@ npm i @sveltecraft/p5-svelte p5
 </label>
 ```
 
-## Addons (p5.sound, etc.)
+## Multiple Sketches
+
+You can create as many sketches as you want:
+
+```svelte
+<script lang="ts">
+	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte'
+
+	const walker: Sketch = (p) => {
+		// ...
+	}
+
+	const randomNumberDistribution: Sketch = (p) => {
+		// ...
+	}
+</script>
+
+<!-- walker -->
+<P5Sketch sketch={walker} />
+
+<!-- random number distribution -->
+<P5Sketch sketch={randomNumberDistribution} />
+```
+
+## Addons
 
 > ⚠️ **Warning**
 > p5.js 2.0+ has a slightly different API than older versions. In the new version, asset preloading is done in `setup` instead of the `preload` function.
 
-In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case — `p5.sound` is a standalone package and doesn't include types, so you have to use `any` or create your own types.
+This section describes using addons like `p5.sound`.
+
+In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case. `p5.sound` is a standalone package you have to install using `npm i p5.sound` and it doesn't include types, so you have to use `any` or create your own types.
 
 Addons like `p5.sound` require access to a global `p5` instance, so we have to dynamically load them using the `addons` array before the sketch initializes:
 
@@ -64,8 +92,8 @@ Addons like `p5.sound` require access to a global `p5` instance, so we have to d
 		play: () => void
 	}
 
-	// @ts-expect-error no types
-	const addons = [() => import('p5.sound')]
+	// pass your addons here
+	const addons = [() => import('p5.sound'), import('./addon.js')]
 
 	const sketch: Sketch = (p) => {
 		// store sound reference
