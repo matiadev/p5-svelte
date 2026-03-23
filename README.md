@@ -14,7 +14,7 @@ npm i @sveltecraft/p5-svelte p5
 
 ## Usage
 
-Import the `P5Sketch` component and the optional `Sketch` type. After that create a sketch function with a `setup` and `draw` function. Since we're using [instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) we have to prefix any p5 method with `p` which we receive as an argument:
+Import the `P5Sketch` component and the optional `Sketch` type. After that create a `sketch` function with a `setup` and `draw` function. Since we're using [instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) we have to prefix any p5 method with `p` which we receive as an argument:
 
 ```svelte
 <script lang="ts">
@@ -78,6 +78,8 @@ If you want to abstract your code into a class or function keep in mind you have
 
 ```svelte
 <script lang="ts">
+	import type p5 from 'p5'
+
 	class Walker {
 		p: p5
 		x = 0
@@ -102,7 +104,7 @@ If you want to abstract your code into a class or function keep in mind you have
 		}
 	}
 
-	const walker: Sketch = (p) => {
+	const sketch: Sketch = (p) => {
 		let walker: Walker
 		p.setup = () => {
 			walker = new Walker(p)
@@ -116,7 +118,7 @@ If you want to abstract your code into a class or function keep in mind you have
 	}
 </script>
 
-<P5Sketch sketch={walker} />
+<P5Sketch {sketch} />
 ```
 
 ## Addons
