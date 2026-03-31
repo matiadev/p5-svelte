@@ -14,6 +14,9 @@ npm i @sveltecraft/p5-svelte p5
 
 ## Usage
 
+> ⚠️ **Warning**
+> p5.js 2.0+ has a slightly different API than older versions. In the new version, asset preloading is done in `setup` instead of the `preload` function.
+
 Import the `P5Sketch` component and the optional `Sketch` type. After that create a `sketch` function with a `setup` and `draw` function. Since we're using [instance mode](https://github.com/processing/p5.js/wiki/Global-and-instance-mode) we have to prefix any p5 method with `p` which we receive as an argument:
 
 ```svelte
@@ -123,30 +126,27 @@ If you want to abstract your code into a class or function keep in mind you have
 
 ## Addons
 
-> ⚠️ **Warning**
-> p5.js 2.0+ has a slightly different API than older versions. In the new version, asset preloading is done in `setup` instead of the `preload` function.
+This section shows how to use legacy addons that only work with a global p5 instance and ones that support instance mode.
 
-This section describes using addons like `p5.sound`.
+You have to install addons using [npm](https://npmx.dev/) instead of using a CDN.
 
-In the past `p5.sound` was part of `p5.js` and it was typed using the `@types/p5` package which is no longer the case. `p5.sound` is a standalone package you have to install using `npm i p5.sound`. It doesn't include types, so you have to use `any` or create your own types.
+### Legacy Addons
 
-Addons like `p5.sound` require access to a global `p5` instance, so we have to dynamically load them using the `addons` array before the sketch initializes:
+Addons like `p5.sound` require access to a global `p5` instance, so we have to load them using the `addons` array before the sketch initializes:
 
 ```svelte
 <script lang="ts">
 	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte'
 
-	// custom sound type
-	type SoundFile = {
-		play: () => void
-	}
+	// 🚫 this doesn't work
+	import 'p5.sound'
 
-	// pass your addons here
-	const addons = [() => import('p5.sound'), import('./addon.js')]
+	// 👍 pass your legacy addons here
+	const addons = [() => import('p5.sound')]
 
 	const sketch: Sketch = (p) => {
 		// store sound reference
-		let sound: SoundFile
+		let sound: any
 		p.setup = async () => {
 			// preload sound from `static` folder
 			sound = await (p as any).loadSound('/sfx.mp3')
@@ -162,10 +162,9 @@ Addons like `p5.sound` require access to a global `p5` instance, so we have to d
 	}
 </script>
 
+<!-- pass the addons -->
 <P5Sketch {sketch} {addons} />
 ```
-
-### Why this approach?
 
 Addons like `p5.sound` look for `window.p5` at load time to extend the library. By passing addons as an array, the component:
 
@@ -175,6 +174,31 @@ Addons like `p5.sound` look for `window.p5` at load time to extend the library. 
 4. Then initializes your sketch
 
 This ensures addons are properly registered before your sketch runs.
+
+### Instance Mode Addons
+
+You can find information how to use addons that support instance mode by reading their docs. Here's an example of using the `p5.brush` addon:
+
+```svelte
+<script lang="ts">
+	import P5Sketch, { type Sketch } from '@sveltecraft/p5-svelte'
+	import * as brush from 'p5.brush'
+
+	const sketch: Sketch = (p) => {
+		brush.instance(p)
+
+		p.setup = () => {
+			p.createCanvas(400, 400, p.WEBGL)
+		}
+
+		p.draw = () => {
+			// ...
+		}
+	}
+</script>
+
+<P5Sketch {sketch} />
+```
 
 ## API
 
