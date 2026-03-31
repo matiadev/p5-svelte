@@ -126,13 +126,11 @@ If you want to abstract your code into a class or function keep in mind you have
 
 ## Addons
 
-This section shows how to use legacy addons that only work with a global p5 instance and ones that support instance mode.
+This section shows how to use legacy addons that only work with a global p5 instance and ones that support instance mode. You have to install addons using [npm](https://npmx.dev/) instead of using a CDN.
 
-You have to install addons using [npm](https://npmx.dev/) instead of using a CDN.
+### Legacy Global Mode Addons
 
-### Legacy Addons
-
-Addons like `p5.sound` require access to a global `p5` instance, so we have to load them using the `addons` array before the sketch initializes:
+Addons like `p5.sound` work only in global mode, so we have to load them using the `addons` array before the sketch initializes:
 
 ```svelte
 <script lang="ts">
@@ -145,10 +143,8 @@ Addons like `p5.sound` require access to a global `p5` instance, so we have to l
 	const addons = [() => import('p5.sound')]
 
 	const sketch: Sketch = (p) => {
-		// store sound reference
 		let sound: any
 		p.setup = async () => {
-			// preload sound from `static` folder
 			sound = await (p as any).loadSound('/sfx.mp3')
 			p.createCanvas(400, 400)
 		}
@@ -156,7 +152,6 @@ Addons like `p5.sound` require access to a global `p5` instance, so we have to l
 			p.background(10)
 		}
 		p.mousePressed = () => {
-			// play sound
 			sound.play()
 		}
 	}
@@ -177,7 +172,7 @@ This ensures addons are properly registered before your sketch runs.
 
 ### Instance Mode Addons
 
-You can find information how to use addons that support instance mode by reading their docs. Here's an example of using the `p5.brush` addon:
+Addons like `p5.brush` support global and instance mode. You can learn how to use it by reading their docs. Here's an example of using the `p5.brush` addon:
 
 ```svelte
 <script lang="ts">
